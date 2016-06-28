@@ -1,0 +1,126 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity">
+
+
+
+
+    <io.radika.bitmaptest.CustomView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/cVIEW"/>
+
+    <io.radika.bitmaptest.GoHomeGauge
+        android:id="@+id/gaugeAtLocation"
+        android:layout_centerInParent="true"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:layout_width="230dp"
+        android:layout_height="230dp"
+        app:gaugePointStartColor="@color/md_green_600"
+        app:gaugePointEndColor="@color/md_green_600"
+        app:gaugePointSize="10"
+        app:gaugeStartAngel="270"
+        app:gaugeStrokeCap="ROUND"
+        app:gaugeStrokeColor="@color/md_black_1000"
+        app:gaugeStrokeWidth="10dp"
+        app:gaugeStartValue="0"
+        app:gaugeEndValue="360"
+        app:gaugeSweepAngel="360"/>
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:id="@+id/showValor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="angle" />
+
+        <TextView
+            android:id="@+id/showDistance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="distance"
+            android:layout_below="@id/showValor"
+            android:layout_marginTop="10dp"
+            />
+
+        <TextView
+            android:id="@+id/showPitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/showValor"
+            android:layout_marginLeft="40dp"
+            android:text="Pitch"
+            />
+
+        <TextView
+            android:id="@+id/showRoll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/showValor"
+            android:layout_below="@id/showPitch"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="40dp"
+            android:text="Roll"
+            />
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Decrement"
+            android:id="@+id/decrement"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:onClick="Decrementa"
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Increment"
+            android:id="@+id/increment"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:onClick="Incrementa"
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Distancia --"
+            android:id="@+id/Ddistance"
+            android:layout_above="@+id/decrement"
+            android:layout_alignRight="@+id/decrement"
+            android:layout_alignEnd="@+id/decrement"
+            android:onClick="DecrementaD"
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Distancia ++"
+            android:id="@+id/Idistance"
+            android:onClick="IncrementaD"
+            android:layout_alignTop="@+id/Ddistance"
+            android:layout_alignLeft="@+id/increment"
+            android:layout_alignStart="@+id/increment" />
+
+    </RelativeLayout>
+</RelativeLayout>
