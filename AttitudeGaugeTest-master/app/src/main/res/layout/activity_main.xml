@@ -15,6 +15,7 @@
     <io.radika.bitmaptest.CustomView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:arcColor="@color/laloGreen"
         android:id="@+id/cVIEW"/>
 
     <io.radika.bitmaptest.GoHomeGauge

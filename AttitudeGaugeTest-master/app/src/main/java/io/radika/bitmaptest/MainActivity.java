@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
 
+    //Botones
     public void IncrementaD(View view){
         distance +=5;
         gauge.setValue(valor, distance);

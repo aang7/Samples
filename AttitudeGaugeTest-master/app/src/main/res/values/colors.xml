@@ -159,7 +159,7 @@
     <color name="md_green_A200">#5af158</color>
     <color name="md_green_A400">#14e715</color>
     <color name="md_green_A700">#12c700</color>
-
+    <color name="laloGreen">#FF259b24</color>
     <!--light green-->
     <color name="md_light_green_50">#f1f8e9</color>
     <color name="md_light_green_100">#dcedc8</color>

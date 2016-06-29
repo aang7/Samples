@@ -1,11 +1,13 @@
 package io.radika.bitmaptest;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -27,6 +29,10 @@ public class CustomView extends View {
     private int mWidth;
     private int mHeight;
 
+    private int arcColor;
+
+    private TypedArray a;
+
     public CustomView(Context context) {
         //super(context);
         this(context,null);
@@ -38,7 +44,10 @@ public class CustomView extends View {
         paint = new Paint();
         paint.setAntiAlias(true);
         //paint.setColor(R.color.md_green_600);
-        paint.setColor(0XFF259b24);
+        a = context.obtainStyledAttributes(attrs, R.styleable.CustomView, 0, 0);
+        arcColor = a.getColor(R.styleable.CustomView_arcColor, ContextCompat.getColor(context, android.R.color.white));
+
+        paint.setColor(arcColor);
     }
 
 
