@@ -132,7 +132,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
 
-
     @Override
     public void onSensorChanged(SensorEvent event) {
         if(event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR)

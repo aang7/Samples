@@ -26,6 +26,8 @@ public class CustomView extends View {
     private Canvas mSrcCanvas;
     private Bitmap mDstBitmap;
 
+    private Paint linePaint;
+    private Paint lineUpPaint;
     private int mWidth;
     private int mHeight;
 
@@ -42,12 +44,24 @@ public class CustomView extends View {
     public CustomView(Context context, AttributeSet attrs) {
         super(context, attrs);
         paint = new Paint();
+        linePaint = new Paint();
         paint.setAntiAlias(true);
         //paint.setColor(R.color.md_green_600);
         a = context.obtainStyledAttributes(attrs, R.styleable.CustomView, 0, 0);
         arcColor = a.getColor(R.styleable.CustomView_arcColor, ContextCompat.getColor(context, android.R.color.white));
 
         paint.setColor(arcColor);
+        linePaint.setColor(Color.BLACK);
+        linePaint.setFakeBoldText(true);
+        linePaint.setStyle(Paint.Style.STROKE);
+        linePaint.setStrokeWidth(2);
+        linePaint.setAntiAlias(true);
+
+        lineUpPaint = new Paint();
+        lineUpPaint.setColor(Color.BLACK);
+        lineUpPaint.setStyle(Paint.Style.STROKE);
+        lineUpPaint.setAntiAlias(true);
+
     }
 
 
@@ -73,8 +87,51 @@ public class CustomView extends View {
 
         //canvas.drawCircle(viewWidthHalf,viewHeightHalf,radius,paint);
         canvas.drawArc(new RectF(viewWidthHalf-radius,viewHeightHalf-radius,viewWidthHalf+radius,viewHeightHalf+radius),mRoll+mPitch*radius/90,180-2*mPitch*radius/90,false,paint);//wArc(wingsCircleBounds, 0, 180, false, mMinPlanePaint);
-        Log.d("START :", Float.toString(mRoll));
-        Log.d("SWEEP :",Float.toString(180+mRoll));
+
+        canvas.save();
+
+        canvas.restore();
+
+        float minPlaneCircleRadiusX = mWidth / 6;
+        float minPlaneCircleRadiusY = mHeight / 6;
+        float centerX = mWidth / 2;
+        float centerY = mHeight / 2;
+
+        // Wings of miniature plane
+        float wingLength = mWidth / 6;
+        //canvas.drawLine(viewWidthHalf+69 - minPlaneCircleRadiusX - wingLength, centerY, centerX
+          //      - minPlaneCircleRadiusX+69, centerY, linePaint);
+
+
+        //canvas.drawLine(centerX-10, centerY, centerX- minPlaneCircleRadiusX+69, centerY, linePaint);
+
+        //Triangle
+        float bottomLadderStepX = radius/3 + 6;
+        float bottomLadderStepY = radius/3 + 6;
+        canvas.drawLine(centerX, centerY, centerX - bottomLadderStepX * 2f, centerY
+                + bottomLadderStepY * 2f, linePaint);
+        canvas.drawLine(centerX, centerY, centerX + bottomLadderStepX * 2f, centerY
+                + bottomLadderStepY * 2f, linePaint);
+
+        //draw bottom lines
+        /*for (int i = 1; i <= 3; i++) {
+            float y = centerY + bottomLadderStepY * i/3;
+            canvas.drawLine(centerX - radius * i/3f, y, centerX + radius * i/3f, y,
+                    linePaint); //en vez de radius estaba bottomLadderStepX
+
+        }*/
+
+        //Draw up lines
+        float ladderStepY = radius/4;
+        for (int i = 1; i <= 4; i++) {
+            float width = mWidth / (10.2f*i + 2);
+            float y = centerY - ladderStepY * i;
+            canvas.drawLine(centerX - width / 2, y, centerX + width / 2, y, lineUpPaint);
+        }
+
+
+        //Log.d("START :", Float.toString(mRoll));
+        //Log.d("SWEEP :",Float.toString(180+mRoll));
 
     }
 
