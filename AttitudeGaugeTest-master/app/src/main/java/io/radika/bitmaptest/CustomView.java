@@ -85,12 +85,12 @@ public class CustomView extends View {
         else
             radius=(viewWidthHalf/2);
 
-        //canvas.drawCircle(viewWidthHalf,viewHeightHalf,radius,paint);
         canvas.drawArc(new RectF(viewWidthHalf-radius,viewHeightHalf-radius,viewWidthHalf+radius,viewHeightHalf+radius),mRoll+mPitch*radius/90,180-2*mPitch*radius/90,false,paint);//wArc(wingsCircleBounds, 0, 180, false, mMinPlanePaint);
 
-        canvas.save();
+        //Aqui empeze
+        //canvas.save();
 
-        canvas.restore();
+        //canvas.restore();
 
         float minPlaneCircleRadiusX = mWidth / 6;
         float minPlaneCircleRadiusY = mHeight / 6;
