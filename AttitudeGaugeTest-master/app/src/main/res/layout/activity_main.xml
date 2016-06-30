@@ -13,8 +13,8 @@
 
 
     <io.radika.bitmaptest.CustomView
-        android:layout_width="329dp"
-        android:layout_height="329dp"
+        android:layout_width="400dp"
+        android:layout_height="400dp"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
         android:paddingLeft="5dp"

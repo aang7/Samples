@@ -81,9 +81,9 @@ public class CustomView extends View {
 
         int radius = 0;
         if(viewWidthHalf>viewHeightHalf)
-            radius=(viewHeightHalf/2) + 69; // -28 , -10
+            radius=(viewHeightHalf/2); // +69, -28 , -10
         else
-            radius=(viewWidthHalf/2) + 69;
+            radius=(viewWidthHalf/2);
 
         //canvas.drawCircle(viewWidthHalf,viewHeightHalf,radius,paint);
         canvas.drawArc(new RectF(viewWidthHalf-radius,viewHeightHalf-radius,viewWidthHalf+radius,viewHeightHalf+radius),mRoll+mPitch*radius/90,180-2*mPitch*radius/90,false,paint);//wArc(wingsCircleBounds, 0, 180, false, mMinPlanePaint);
@@ -106,20 +106,20 @@ public class CustomView extends View {
         //canvas.drawLine(centerX-10, centerY, centerX- minPlaneCircleRadiusX+69, centerY, linePaint);
 
         //Triangle
-        float bottomLadderStepX = radius/3 + 6;
-        float bottomLadderStepY = radius/3 + 6;
+        float bottomLadderStepX = radius/3;
+        float bottomLadderStepY = radius/3;
         canvas.drawLine(centerX, centerY, centerX - bottomLadderStepX * 2f, centerY
                 + bottomLadderStepY * 2f, linePaint);
         canvas.drawLine(centerX, centerY, centerX + bottomLadderStepX * 2f, centerY
                 + bottomLadderStepY * 2f, linePaint);
 
         //draw bottom lines
-        /*for (int i = 1; i <= 3; i++) {
+        for (int i = 1; i <= 6; i++) {
             float y = centerY + bottomLadderStepY * i/3;
-            canvas.drawLine(centerX - radius * i/3f, y, centerX + radius * i/3f, y,
+            canvas.drawLine(centerX - radius * i/9f, y, centerX + radius * i/9f , y,
                     linePaint); //en vez de radius estaba bottomLadderStepX
 
-        }*/
+        }
 
         //Draw up lines
         float ladderStepY = radius/4;
