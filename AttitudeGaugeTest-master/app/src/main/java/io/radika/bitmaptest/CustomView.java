@@ -6,6 +6,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
@@ -21,17 +23,27 @@ public class CustomView extends View {
     private float mPitch = 0; // Degrees
     private float mRoll = 0; // Degrees, left roll is positive
 
+    private static final float TOTAL_VISIBLE_PITCH_DEGREES = 45 * 2; // � 45�
+
+
     // These are created once and reused in subsequent onDraw calls.
-    private Bitmap mSrcBitmap;
-    private Canvas mSrcCanvas;
+    private Bitmap linesBitmap;
+    private Canvas linesCanvas;
     private Bitmap mDstBitmap;
+    //private Canvas mSrcCanvas;
+    //private Bitmap mDstBitmap;
+
+    private final PorterDuffXfermode mXfermode;
 
     private Paint linePaint;
     private Paint lineUpPaint;
     private int mWidth;
     private int mHeight;
 
+    private Paint mBitmapPaint;
+
     private int arcColor;
+
 
     private TypedArray a;
 
@@ -61,6 +73,12 @@ public class CustomView extends View {
         lineUpPaint.setColor(Color.BLACK);
         lineUpPaint.setStyle(Paint.Style.STROKE);
         lineUpPaint.setAntiAlias(true);
+        //linesBitmap = new Bitmap();
+
+        mBitmapPaint = new Paint();
+        mBitmapPaint.setFilterBitmap(false);
+
+        mXfermode = new PorterDuffXfermode(PorterDuff.Mode.SRC_IN);
 
     }
 
@@ -70,6 +88,78 @@ public class CustomView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
         mWidth = w ;
         mHeight = h;
+    }
+
+
+    //Crea el ovalo (La forma del view)
+    private Bitmap getCircle(int radio, int Width, int Height) {
+        if (mDstBitmap == null) {
+            mDstBitmap = Bitmap.createBitmap(Width, Height, Bitmap.Config.ARGB_8888);
+            Canvas c = new Canvas(mDstBitmap);
+            c.drawColor(Color.TRANSPARENT);
+
+            float Width2 = c.getWidth()/2; //Obtengo medidas del bitmap
+            float Height2 = c.getHeight()/2;
+            Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+            p.setColor(Color.RED);
+            c.drawOval(new RectF(Width2-radio,Height2-radio,Width2+radio,Height2+radio), p);
+            //c.drawCircle();
+            //c.drawOval(new RectF(0, 0, mWidth, mHeight), p);
+        }
+        return mDstBitmap;
+    }
+
+    public Bitmap Lines(int radio, int Width, int Height) {
+
+        if (linesBitmap == null){
+            linesBitmap = Bitmap.createBitmap(Width, Height, Bitmap.Config.ARGB_8888);
+            linesCanvas = new Canvas(linesBitmap);
+        }
+
+        Canvas canvas = linesCanvas;
+
+        //canvas.drawColor(Color.TRANSPARENT);
+        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+
+        float centerX = Width / 2;
+        float centerY = Height / 2;
+
+        canvas.save();
+        canvas.rotate(mRoll, centerX, centerY);
+        canvas.translate(0, (mPitch / TOTAL_VISIBLE_PITCH_DEGREES) * Height);
+
+
+       // canvas.drawArc(new RectF(Width-radio,Height-radio,Width+radio,Height+radio),mRoll+mPitch*radio/90,180-2*mPitch*radio/90,false,paint);//wArc(wingsCircleBounds, 0, 180, false, mMinPlanePaint);
+
+        //Triangle
+        float bottomLadderStepX = radio/3;
+        float bottomLadderStepY = radio/3;
+        canvas.drawLine(centerX, centerY, centerX - bottomLadderStepX * 2f, centerY
+                + bottomLadderStepY * 2f, linePaint);
+        canvas.drawLine(centerX, centerY, centerX + bottomLadderStepX * 2f, centerY
+                + bottomLadderStepY * 2f, linePaint);
+
+        //draw bottom lines
+        for (int i = 1; i <= 6; i++) {
+            float y = centerY + bottomLadderStepY * i/3;
+            canvas.drawLine(centerX - radio * i/9f, y, centerX + radio * i/9f , y,
+                    linePaint); //en vez de radio estaba bottomLadderStepX
+
+        }
+
+        //Draw up lines
+        float ladderStepY = radio/4;
+        for (int i = 1; i <= 4; i++) {
+            float width = Width / (10.2f*i + 2);
+            float y = centerY - ladderStepY * i;
+            canvas.drawLine(centerX - width / 2, y, centerX + width / 2, y, lineUpPaint);
+        }
+
+
+        canvas.restore();
+
+
+        return linesBitmap;
     }
 
     @Override
@@ -87,51 +177,24 @@ public class CustomView extends View {
 
         canvas.drawArc(new RectF(viewWidthHalf-radius,viewHeightHalf-radius,viewWidthHalf+radius,viewHeightHalf+radius),mRoll+mPitch*radius/90,180-2*mPitch*radius/90,false,paint);//wArc(wingsCircleBounds, 0, 180, false, mMinPlanePaint);
 
-        //Aqui empeze
-        //canvas.save();
 
-        //canvas.restore();
+        Bitmap line = Lines(radius, viewWidthHalf, viewHeightHalf);
+        Bitmap circle = getCircle(radius, viewWidthHalf, viewHeightHalf);
 
-        float minPlaneCircleRadiusX = mWidth / 6;
-        float minPlaneCircleRadiusY = mHeight / 6;
-        float centerX = mWidth / 2;
-        float centerY = mHeight / 2;
+        int sc = canvas.saveLayer(0, 0, mWidth, mHeight, null, Canvas.MATRIX_SAVE_FLAG
+                | Canvas.CLIP_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG
+                | Canvas.FULL_COLOR_LAYER_SAVE_FLAG | Canvas.CLIP_TO_LAYER_SAVE_FLAG);
 
-        // Wings of miniature plane
-        float wingLength = mWidth / 6;
-        //canvas.drawLine(viewWidthHalf+69 - minPlaneCircleRadiusX - wingLength, centerY, centerX
-          //      - minPlaneCircleRadiusX+69, centerY, linePaint);
+        canvas.drawBitmap(circle, viewWidthHalf-radius,viewHeightHalf-radius, mBitmapPaint);
+        mBitmapPaint.setXfermode(mXfermode);
+        canvas.drawBitmap(line, viewWidthHalf-radius, viewHeightHalf-radius, mBitmapPaint);
+        mBitmapPaint.setXfermode(null);
 
 
-        //canvas.drawLine(centerX-10, centerY, centerX- minPlaneCircleRadiusX+69, centerY, linePaint);
 
-        //Triangle
-        float bottomLadderStepX = radius/3;
-        float bottomLadderStepY = radius/3;
-        canvas.drawLine(centerX, centerY, centerX - bottomLadderStepX * 2f, centerY
-                + bottomLadderStepY * 2f, linePaint);
-        canvas.drawLine(centerX, centerY, centerX + bottomLadderStepX * 2f, centerY
-                + bottomLadderStepY * 2f, linePaint);
+        canvas.restoreToCount(sc);
 
-        //draw bottom lines
-        for (int i = 1; i <= 6; i++) {
-            float y = centerY + bottomLadderStepY * i/3;
-            canvas.drawLine(centerX - radius * i/9f, y, centerX + radius * i/9f , y,
-                    linePaint); //en vez de radius estaba bottomLadderStepX
-
-        }
-
-        //Draw up lines
-        float ladderStepY = radius/4;
-        for (int i = 1; i <= 4; i++) {
-            float width = mWidth / (10.2f*i + 2);
-            float y = centerY - ladderStepY * i;
-            canvas.drawLine(centerX - width / 2, y, centerX + width / 2, y, lineUpPaint);
-        }
-
-
-        //Log.d("START :", Float.toString(mRoll));
-        //Log.d("SWEEP :",Float.toString(180+mRoll));
+        //canvas.drawArc(new RectF(viewWidthHalf-radius,viewHeightHalf-radius,viewWidthHalf+radius,viewHeightHalf+radius),mRoll+mPitch*radius/90,180-2*mPitch*radius/90,false,paint);//wArc(wingsCircleBounds, 0, 180, false, mMinPlanePaint);
 
     }
 
