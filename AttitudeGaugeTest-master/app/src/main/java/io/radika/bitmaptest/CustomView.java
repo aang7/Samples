@@ -6,12 +6,12 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 /**
@@ -19,50 +19,47 @@ import android.view.View;
  */
 public class CustomView extends View {
 
-    private final Paint paint;
-    private float mPitch = 0; // Degrees
-    private float mRoll = 0; // Degrees, left roll is positive
-
     private static final float TOTAL_VISIBLE_PITCH_DEGREES = 45 * 2; // � 45�
 
-
-    // These are created once and reused in subsequent onDraw calls.
+    // created and reused in onDraw
     private Bitmap linesBitmap;
-    private Canvas linesCanvas;
     private Bitmap mDstBitmap;
-    //private Canvas mSrcCanvas;
-    //private Bitmap mDstBitmap;
+    private Canvas linesCanvas;
+
+    private final Paint paint;
+    private Paint mBitmapPaint;
+    private Paint linePaint;
+    private Paint lineUpPaint;
 
     private final PorterDuffXfermode mXfermode;
 
-    private Paint linePaint;
-    private Paint lineUpPaint;
     private int mWidth;
     private int mHeight;
-
-    private Paint mBitmapPaint;
-
     private int arcColor;
+
+    private float mPitch = 0; // Degrees
+    private float mRoll = 0; // Degrees, left roll is positive
+
+    private Paint textPaint;
 
 
     private TypedArray a;
 
     public CustomView(Context context) {
-        //super(context);
         this(context,null);
-
     }
 
     public CustomView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        paint = new Paint();
-        linePaint = new Paint();
-        paint.setAntiAlias(true);
-        //paint.setColor(R.color.md_green_600);
-        a = context.obtainStyledAttributes(attrs, R.styleable.CustomView, 0, 0);
+
+        a = context.obtainStyledAttributes(attrs, R.styleable.CustomView, 0, 0); //Resources Access
         arcColor = a.getColor(R.styleable.CustomView_arcColor, ContextCompat.getColor(context, android.R.color.white));
 
+        paint = new Paint();
+        paint.setAntiAlias(true);
         paint.setColor(arcColor);
+
+        linePaint = new Paint();
         linePaint.setColor(Color.BLACK);
         linePaint.setFakeBoldText(true);
         linePaint.setStyle(Paint.Style.STROKE);
@@ -73,12 +70,19 @@ public class CustomView extends View {
         lineUpPaint.setColor(Color.BLACK);
         lineUpPaint.setStyle(Paint.Style.STROKE);
         lineUpPaint.setAntiAlias(true);
-        //linesBitmap = new Bitmap();
 
         mBitmapPaint = new Paint();
         mBitmapPaint.setFilterBitmap(false);
 
         mXfermode = new PorterDuffXfermode(PorterDuff.Mode.SRC_IN);
+
+        //textHeight = (int) textPaint.measureText("YYY"); //ESTO NO JALA
+        textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        textPaint.setColor(Color.BLACK);
+        textPaint.setTextSize(20.0f);
+        textPaint.setFakeBoldText(true);
+        textPaint.setSubpixelText(true);
+        textPaint.setTextAlign(Paint.Align.LEFT);
 
     }
 
@@ -86,25 +90,25 @@ public class CustomView extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        mWidth = w ;
+        mWidth = w;
         mHeight = h;
     }
 
 
     //Crea el ovalo (La forma del view)
     private Bitmap getCircle(int radio, int Width, int Height) {
+
         if (mDstBitmap == null) {
             mDstBitmap = Bitmap.createBitmap(Width, Height, Bitmap.Config.ARGB_8888);
             Canvas c = new Canvas(mDstBitmap);
             c.drawColor(Color.TRANSPARENT);
 
-            float Width2 = c.getWidth()/2; //Obtengo medidas del bitmap
+            float Width2 = c.getWidth()/2; //obtengo medidas del bitmap
             float Height2 = c.getHeight()/2;
             Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
             p.setColor(Color.RED);
             c.drawOval(new RectF(Width2-radio,Height2-radio,Width2+radio,Height2+radio), p);
-            //c.drawCircle();
-            //c.drawOval(new RectF(0, 0, mWidth, mHeight), p);
+
         }
         return mDstBitmap;
     }
@@ -118,8 +122,7 @@ public class CustomView extends View {
 
         Canvas canvas = linesCanvas;
 
-        //canvas.drawColor(Color.TRANSPARENT);
-        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR); //It's like repaint
 
         float centerX = Width / 2;
         float centerY = Height / 2;
@@ -127,9 +130,6 @@ public class CustomView extends View {
         canvas.save();
         canvas.rotate(mRoll, centerX, centerY);
         canvas.translate(0, (mPitch / TOTAL_VISIBLE_PITCH_DEGREES) * Height);
-
-
-       // canvas.drawArc(new RectF(Width-radio,Height-radio,Width+radio,Height+radio),mRoll+mPitch*radio/90,180-2*mPitch*radio/90,false,paint);//wArc(wingsCircleBounds, 0, 180, false, mMinPlanePaint);
 
         //Triangle
         float bottomLadderStepX = radio/3;
@@ -158,7 +158,6 @@ public class CustomView extends View {
 
         canvas.restore();
 
-
         return linesBitmap;
     }
 
@@ -169,17 +168,52 @@ public class CustomView extends View {
         int viewWidthHalf = getWidth()/2;
         int viewHeightHalf = getHeight()/2;
 
+        float centerX = viewWidthHalf; ///
+        float centerY = viewWidthHalf;///
+
         int radius = 0;
         if(viewWidthHalf>viewHeightHalf)
             radius=(viewHeightHalf/2); // +69, -28 , -10
         else
             radius=(viewWidthHalf/2);
 
-        canvas.drawArc(new RectF(viewWidthHalf-radius,viewHeightHalf-radius,viewWidthHalf+radius,viewHeightHalf+radius),mRoll+mPitch*radius/90,180-2*mPitch*radius/90,false,paint);//wArc(wingsCircleBounds, 0, 180, false, mMinPlanePaint);
+        //Green Arc
+        canvas.drawArc(new RectF(viewWidthHalf-radius,viewHeightHalf-radius,viewWidthHalf+radius,viewHeightHalf+radius),mRoll+mPitch*radius/90,180-2*mPitch*radius/90,false,paint);
 
+        ////
+        //canvas.restore();
+        canvas.save();
+
+        canvas.rotate(180, centerX, centerY);
+        for (int i = -180; i < 180; i += 10)
+        {
+            // Show a numeric value every 30 degrees
+            if (i % 30 == 0) {
+                String rollString = String.valueOf(i*-1);
+                float rollStringWidth = textPaint.measureText(rollString);
+                PointF rollStringCenter = new PointF(centerX-rollStringWidth/2,
+                                radius+20);
+                canvas.drawText(rollString, rollStringCenter.x, rollStringCenter.y, textPaint);
+            }
+            // Otherwise draw a marker line
+            else {
+                canvas.drawLine(centerX, (int)radius,
+                        centerX, radius+ 5,
+                        linePaint);
+            }
+
+            canvas.rotate(10, centerX, centerY);
+        }
+
+        //canvas.save();
+        canvas.restore();
+
+
+        ////
 
         Bitmap line = Lines(radius, viewWidthHalf, viewHeightHalf);
         Bitmap circle = getCircle(radius, viewWidthHalf, viewHeightHalf);
+
 
         int sc = canvas.saveLayer(0, 0, mWidth, mHeight, null, Canvas.MATRIX_SAVE_FLAG
                 | Canvas.CLIP_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG
@@ -190,11 +224,7 @@ public class CustomView extends View {
         canvas.drawBitmap(line, viewWidthHalf-radius, viewHeightHalf-radius, mBitmapPaint);
         mBitmapPaint.setXfermode(null);
 
-
-
         canvas.restoreToCount(sc);
-
-        //canvas.drawArc(new RectF(viewWidthHalf-radius,viewHeightHalf-radius,viewWidthHalf+radius,viewHeightHalf+radius),mRoll+mPitch*radius/90,180-2*mPitch*radius/90,false,paint);//wArc(wingsCircleBounds, 0, 180, false, mMinPlanePaint);
 
     }
 
