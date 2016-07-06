@@ -13,13 +13,15 @@
 
 
     <io.radika.bitmaptest.CustomView
-        android:layout_width="400dp"
-        android:layout_height="400dp"
+        android:layout_width="450dp"
+        android:layout_height="450dp"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         app:arcColor="@color/laloGreen"
+        app:arrowColor="@color/md_red_900"
+        app:textSize="25"
         android:id="@+id/cVIEW"
         android:layout_gravity="center"
         />
@@ -31,8 +33,8 @@
         android:paddingTop="5dp"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
-        android:layout_width="230dp"
-        android:layout_height="230dp"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
         app:gaugePointStartColor="@color/md_green_600"
         app:gaugePointEndColor="@color/md_green_600"
         app:gaugePointSize="10"
