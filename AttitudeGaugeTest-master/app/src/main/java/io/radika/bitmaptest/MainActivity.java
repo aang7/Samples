@@ -183,8 +183,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         float pitch = orientation[1] * -57;
         float roll = orientation[2] * -57;
 
-        Log.d("MAIN Pitch",Float.toString(pitch));
-        Log.d("MAIN Roll",Float.toString(roll));
+        //Log.d("MAIN Pitch",Float.toString(pitch));
+        //Log.d("MAIN Roll",Float.toString(roll));
         customView.setAttitude(pitch, roll);
 
         showPitch.setText(Float.toString(pitch));

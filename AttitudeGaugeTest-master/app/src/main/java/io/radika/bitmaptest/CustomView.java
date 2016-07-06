@@ -99,8 +99,9 @@ public class CustomView extends View {
         arrowPaint = new Paint();
         arrowPaint.setColor(arrowColor);
         arrowPaint.setStyle(Paint.Style.FILL);
-        arrowPaint.setStrokeWidth(3);
+        arrowPaint.setStrokeWidth(5);
         arrowPaint.setAntiAlias(true);
+        arrowPaint.setStrokeCap(Paint.Cap.ROUND);
 
         a.recycle();
 
@@ -199,6 +200,14 @@ public class CustomView extends View {
         canvas.drawCircle(centerX, centerY, radio/20, arrowPaint);
         canvas.drawLine(centerX-(radio/20), centerY, centerX - (radio/4), centerY, arrowPaint);
         canvas.drawLine(centerX + (radio/20), centerY, centerX + (radio/4), centerY, arrowPaint);
+        canvas.drawLine(centerX, centerY-radio/15, centerX-10, centerY+radio/20, arrowPaint);
+        canvas.drawLine(centerX, centerY-radio/15, centerX+10, centerY+radio/20, arrowPaint);
+
+        Path triangle = new Path();
+        triangle.moveTo(centerX, centerY-radio/15);
+        triangle.lineTo(centerX-10, centerY-radio);
+
+//        canvas.drawPath(triangle, arrowPaint);
 
 
 
@@ -224,6 +233,7 @@ public class CustomView extends View {
 
         //Green Arc
         canvas.drawArc(new RectF(viewWidthHalf-radius,viewHeightHalf-radius,viewWidthHalf+radius,viewHeightHalf+radius),mRoll+mPitch*radius/90,180-2*mPitch*radius/90,false,circlePaint);
+        //canvas.drawArc(new RectF(viewWidthHalf-radius,viewHeightHalf-radius,viewWidthHalf+radius,viewHeightHalf+radius),(mRoll+mPitch*radius/90),(180-2*mPitch/2*radius/90),false,circlePaint);
 
         //// Lines and degrees marks
         canvas.save();
