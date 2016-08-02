@@ -21,6 +21,7 @@ import android.view.View;
 public class CustomView extends View {
 
     private static final float TOTAL_VISIBLE_PITCH_DEGREES = 45 * 2; // � 45�
+    private static final int EARTH_COLOR = Color.parseColor("#865B4B");
 
     // created and reused in onDraw
     private Bitmap linesBitmap;
@@ -42,12 +43,14 @@ public class CustomView extends View {
     private int markColor;
     private int textColor;
     private int textSize;
+    private int lineColor;
+    private int SKY_COLOR;
 
     private float mPitch = 0; // Degrees
     private float mRoll = 0; // Degrees, left roll is positive
 
     private Paint textPaint;
-
+    private Paint mEarthPaint;
     private Paint arrowPaint;
 
 
@@ -66,20 +69,22 @@ public class CustomView extends View {
         markColor = a.getColor(R.styleable.CustomView_markColor, ContextCompat.getColor(context, android.R.color.black));
         textColor = a.getColor(R.styleable.CustomView_textColor, ContextCompat.getColor(context, android.R.color.black));
         textSize = a.getInt(R.styleable.CustomView_textSize, 20);
+        lineColor = a.getColor(R.styleable.CustomView_lineColor, ContextCompat.getColor(context, android.R.color.black));
+        SKY_COLOR = a.getColor(R.styleable.CustomView_skyColor, ContextCompat.getColor(context, android.R.color.holo_blue_dark));
 
         circlePaint = new Paint();
         circlePaint.setAntiAlias(true);
         circlePaint.setColor(arcColor);
 
         linePaint = new Paint();
-        linePaint.setColor(Color.BLACK);
+        linePaint.setColor(lineColor);
         linePaint.setFakeBoldText(true);
         linePaint.setStyle(Paint.Style.STROKE);
         linePaint.setStrokeWidth(2);
         linePaint.setAntiAlias(true);
 
         lineUpPaint = new Paint();
-        lineUpPaint.setColor(Color.BLACK);
+        lineUpPaint.setColor(lineColor);
         lineUpPaint.setStyle(Paint.Style.STROKE);
         lineUpPaint.setAntiAlias(true);
 
@@ -102,6 +107,11 @@ public class CustomView extends View {
         arrowPaint.setStrokeWidth(5);
         arrowPaint.setAntiAlias(true);
         arrowPaint.setStrokeCap(Paint.Cap.ROUND);
+
+        mEarthPaint = new Paint();
+        mEarthPaint.setAntiAlias(true);
+        mEarthPaint.setColor(EARTH_COLOR);
+
 
         a.recycle();
 
@@ -153,14 +163,21 @@ public class CustomView extends View {
 
         Canvas canvas = linesCanvas;
 
-        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR); //It's like repaint
+        //Background
+        ////canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR); //It's like repaint
+        canvas.drawColor(SKY_COLOR);
 
         float centerX = Width / 2;
         float centerY = Height / 2;
 
         canvas.save();
+
         canvas.rotate(mRoll, centerX, centerY);
         canvas.translate(0, (mPitch / TOTAL_VISIBLE_PITCH_DEGREES) * Height);
+
+        //The earth paint
+        canvas.drawRect(-mWidth, centerY, mWidth * 2, mHeight * 2, mEarthPaint);
+
 
         //Triangle
         float bottomLadderStepX = radio/3;
@@ -207,9 +224,8 @@ public class CustomView extends View {
         triangle.moveTo(centerX, centerY-radio/15);
         triangle.lineTo(centerX-10, centerY-radio);
 
+
 //        canvas.drawPath(triangle, arrowPaint);
-
-
 
         return linesBitmap;
     }
@@ -232,34 +248,14 @@ public class CustomView extends View {
 
 
         //Green Arc
-        canvas.drawArc(new RectF(viewWidthHalf-radius,viewHeightHalf-radius,viewWidthHalf+radius,viewHeightHalf+radius),mRoll+mPitch*radius/90,180-2*mPitch*radius/90,false,circlePaint);
-        //canvas.drawArc(new RectF(viewWidthHalf-radius,viewHeightHalf-radius,viewWidthHalf+radius,viewHeightHalf+radius),(mRoll+mPitch*radius/90),(180-2*mPitch/2*radius/90),false,circlePaint);
+        //canvas.drawArc(new RectF(viewWidthHalf-radius,viewHeightHalf-radius,viewWidthHalf+radius,viewHeightHalf+radius),mRoll+mPitch*radius/90,180-2*mPitch*radius/90,false,circlePaint);
 
         //// Lines and degrees marks
-        canvas.save();
+//        canvas.save();
 
-        canvas.rotate(-80, centerX, centerY);
-        for (int i = -80; i < 90; i += 10)
-        {
-            // Show a numeric value every 30 degrees
-            if (i % 30 == 0) {
-                String rollString = String.valueOf(i*-1);
-                float rollStringWidth = textPaint.measureText(rollString);
-                PointF rollStringCenter = new PointF(centerX-rollStringWidth/2,
-                                radius+20);
-                canvas.drawText(rollString, rollStringCenter.x, rollStringCenter.y, textPaint);
-            }
-            // Otherwise draw a marker line
-            else {
-                canvas.drawLine(centerX, (int)radius,
-                        centerX, radius+ 7,
-                        linePaint);
-            }
 
-            canvas.rotate(10, centerX, centerY);
-        }
 
-        canvas.restore();
+        //canvas.restore();
 
         ////
 
@@ -280,6 +276,7 @@ public class CustomView extends View {
         canvas.save();
 
 
+
         canvas.rotate(-mRoll, centerX, centerY ); //Arrow movement
 
         //arrow
@@ -292,7 +289,28 @@ public class CustomView extends View {
 
         canvas.restore();
 
+        canvas.rotate(-80, centerX, centerY);
+        for (int i = -80; i < 90; i += 10)
+        {
+            // Show a numeric value every 30 degrees
+            if (i % 30 == 0) {
+                String rollString = String.valueOf(i*-1);
+                float rollStringWidth = textPaint.measureText(rollString);
+                PointF rollStringCenter = new PointF(centerX-rollStringWidth/2,
+                        radius+20);
+                canvas.drawText(rollString, rollStringCenter.x, rollStringCenter.y, textPaint);
+            }
+            // Otherwise draw a marker line
+            else {
+                canvas.drawLine(centerX, (int)radius,
+                        centerX, radius+ 7,
+                        linePaint);
+            }
 
+            canvas.rotate(10, centerX, centerY);
+        }
+
+        canvas.restore();
     }
 
     public void setAttitude(float pitch, float roll) {

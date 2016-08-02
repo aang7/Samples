@@ -22,6 +22,9 @@
         app:arcColor="@color/laloGreen"
         app:arrowColor="@color/md_red_900"
         app:textSize="25"
+        app:textColor="@color/md_white_1000"
+        app:lineColor="@color/md_white_1000"
+        app:skyColor="@color/md_black_1000"
         android:id="@+id/cVIEW"
         android:layout_gravity="center"
         />
