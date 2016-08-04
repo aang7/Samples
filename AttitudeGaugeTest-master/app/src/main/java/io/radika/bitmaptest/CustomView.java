@@ -21,7 +21,6 @@ import android.view.View;
 public class CustomView extends View {
 
     private static final float TOTAL_VISIBLE_PITCH_DEGREES = 45 * 2; // � 45�
-    private static final int EARTH_COLOR = Color.parseColor("#865B4B");
 
     // created and reused in onDraw
     private Bitmap linesBitmap;
@@ -45,6 +44,7 @@ public class CustomView extends View {
     private int textSize;
     private int lineColor;
     private int SKY_COLOR;
+    private int EARTH_COLOR;
 
     private float mPitch = 0; // Degrees
     private float mRoll = 0; // Degrees, left roll is positive
@@ -71,6 +71,7 @@ public class CustomView extends View {
         textSize = a.getInt(R.styleable.CustomView_textSize, 20);
         lineColor = a.getColor(R.styleable.CustomView_lineColor, ContextCompat.getColor(context, android.R.color.black));
         SKY_COLOR = a.getColor(R.styleable.CustomView_skyColor, ContextCompat.getColor(context, android.R.color.holo_blue_dark));
+        EARTH_COLOR = a.getColor(R.styleable.CustomView_earthColor, ContextCompat.getColor(context, android.R.color.holo_green_dark));
 
         circlePaint = new Paint();
         circlePaint.setAntiAlias(true);
@@ -213,7 +214,7 @@ public class CustomView extends View {
         //canvas.save();
         canvas.restore();
 
-        //LO que no se mueve
+        //Lo que no se mueve
 
         //canvas.drawPoint(centerX, centerY, linePaint);
 
@@ -290,14 +291,6 @@ public class CustomView extends View {
         //Green Arc
         //canvas.drawArc(new RectF(viewWidthHalf-radius,viewHeightHalf-radius,viewWidthHalf+radius,viewHeightHalf+radius),mRoll+mPitch*radius/90,180-2*mPitch*radius/90,false,circlePaint);
 
-        //// Lines and degrees marks
-//        canvas.save();
-
-
-
-        //canvas.restore();
-
-        ////
 
         Bitmap line = Lines(radius, viewWidthHalf, viewHeightHalf);
         Bitmap circle = getCircle(radius, viewWidthHalf, viewHeightHalf);
@@ -313,44 +306,6 @@ public class CustomView extends View {
 
         canvas.restoreToCount(sc);
 
-        //canvas.save();
-
-
-
-        /*canvas.rotate(-mRoll, centerX, centerY ); //Arrow movement
-
-        //arrow
-        Path rollArrow = new Path();
-        rollArrow.moveTo(centerX, viewHeightHalf-radius+textSize);
-        rollArrow.lineTo(centerX-12, viewHeightHalf-radius+50);
-        rollArrow.lineTo(centerX+12, viewHeightHalf-radius+50);
-        rollArrow.lineTo(centerX, viewHeightHalf-radius+textSize);
-        canvas.drawPath(rollArrow, arrowPaint);*/
-
-        //canvas.restore();
-
-        /*canvas.rotate(-80, centerX, centerY);
-        for (int i = -80; i < 90; i += 10)
-        {
-            // Show a numeric value every 30 degrees
-            if (i % 30 == 0) {
-                String rollString = String.valueOf(i*-1);
-                float rollStringWidth = textPaint.measureText(rollString);
-                PointF rollStringCenter = new PointF(centerX-rollStringWidth/2,
-                        radius+20);
-                canvas.drawText(rollString, rollStringCenter.x, rollStringCenter.y, textPaint);
-            }
-            // Otherwise draw a marker line
-            else {
-                canvas.drawLine(centerX, (int)radius,
-                        centerX, radius+ 7,
-                        linePaint);
-            }
-
-            canvas.rotate(10, centerX, centerY);
-        }
-        */
-        //canvas.restore();
     }
 
     public void setAttitude(float pitch, float roll) {

@@ -28,6 +28,6 @@
         <attr name="textSize" format="integer"/>
         <attr name="lineColor" format="color"/>
         <attr name="skyColor" format="color"/>
-
+        <attr name="earthColor" format="color"/>
     </declare-styleable>
 </resources>

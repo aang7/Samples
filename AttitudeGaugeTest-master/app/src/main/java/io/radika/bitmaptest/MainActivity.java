@@ -21,7 +21,7 @@ public class MainActivity extends Activity implements SensorEventListener{
     CustomView customView;
     int pitch, roll;
 
-    //private GoHomeGauge gauge;
+    private GoHomeGauge gauge;
     private int valor = 0;
     private int distance = 0;
 
@@ -53,8 +53,8 @@ public class MainActivity extends Activity implements SensorEventListener{
         // Can be null if the sensor hardware is not available
         mRotationSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
 
-        //gauge = (GoHomeGauge) findViewById(R.id.gaugeAtLocation);
-        //gauge.setValue(valor, distance);
+        gauge = (GoHomeGauge) findViewById(R.id.gaugeAtLocation);
+        gauge.setValue(valor, distance);
 
         showValor = (TextView) findViewById(R.id.showValor);
         showDistance = (TextView) findViewById(R.id.showDistance);
@@ -106,26 +106,26 @@ public class MainActivity extends Activity implements SensorEventListener{
     //Botones
     public void IncrementaD(View view){
         distance +=5;
-        //gauge.setValue(valor, distance);
+        gauge.setValue(valor, distance);
         showDistance.setText(Integer.toString(distance));
     }
 
     public void DecrementaD(View view){
         distance -=5;
-        //gauge.setValue(valor, distance);
+        gauge.setValue(valor, distance);
         showDistance.setText(Integer.toString(distance));
 
     }
 
     public void Incrementa(View view) {
         valor += 10;
-        //gauge.setValue(valor, distance);
+        gauge.setValue(valor, distance);
         showValor.setText(Integer.toString(valor));
     }
 
     public void Decrementa(View view) {
         valor -= 10;
-        //gauge.setValue(valor, distance);
+        gauge.setValue(valor, distance);
         showValor.setText(Integer.toString(valor));
 
     }
