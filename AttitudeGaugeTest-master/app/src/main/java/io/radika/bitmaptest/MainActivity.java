@@ -64,8 +64,6 @@ public class MainActivity extends Activity implements SensorEventListener{
         showValor.setText(Integer.toString(valor));
         showDistance.setText(Integer.toString(distance));
 
-
-
     }
 
     @Override

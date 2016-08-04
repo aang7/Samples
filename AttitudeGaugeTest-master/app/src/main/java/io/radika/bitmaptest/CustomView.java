@@ -105,7 +105,7 @@ public class CustomView extends View {
         arrowPaint = new Paint();
         arrowPaint.setColor(arrowColor);
         arrowPaint.setStyle(Paint.Style.FILL);
-        arrowPaint.setStrokeWidth(5);
+        arrowPaint.setStrokeWidth(4);
         arrowPaint.setAntiAlias(true);
         arrowPaint.setStrokeCap(Paint.Cap.ROUND);
 
@@ -218,16 +218,16 @@ public class CustomView extends View {
 
         //canvas.drawPoint(centerX, centerY, linePaint);
 
-        canvas.drawCircle(centerX, centerY, radio / 20, arrowPaint);
-        canvas.drawLine(centerX - (radio / 20), centerY, centerX - (radio / 4), centerY, arrowPaint);
-        canvas.drawLine(centerX + (radio / 20), centerY, centerX + (radio / 4), centerY, arrowPaint);
-        canvas.drawLine(centerX, centerY - radio / 15, centerX - 10, centerY + radio / 20, arrowPaint);
-        canvas.drawLine(centerX, centerY - radio / 15, centerX + 10, centerY + radio / 20, arrowPaint);
+        canvas.drawCircle(centerX, centerY, centerX/30, arrowPaint);
+        canvas.drawLine(centerX - (centerX/30), centerY, centerX - (centerX / 7), centerY, arrowPaint);
+        canvas.drawLine(centerX + (centerX/30), centerY, centerX + (centerX / 7), centerY, arrowPaint);
+        canvas.drawLine(centerX, centerY - centerY / 30, centerX - centerX/30, centerY + centerX/30, arrowPaint);
+        canvas.drawLine(centerX, centerY - centerY / 30, centerX + centerX/30, centerY + centerX /30, arrowPaint);
 
         Path triangle = new Path();
         triangle.moveTo(centerX, centerY - radio / 15);
         triangle.lineTo(centerX - 10, centerY - radio);
-        canvas.drawPath(triangle, arrowPaint);
+        //canvas.drawPath(triangle, arrowPaint);
 
         canvas.save();
 
