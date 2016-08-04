@@ -57,7 +57,7 @@ public class CustomView extends View {
     private TypedArray a;
 
     public CustomView(Context context) {
-        this(context,null);
+        this(context, null);
     }
 
     public CustomView(Context context, AttributeSet attrs) {
@@ -137,15 +137,15 @@ public class CustomView extends View {
     private Bitmap getCircle(float radio, int Width, int Height) {
 
         if (mDstBitmap == null) {
-            mDstBitmap = Bitmap.createBitmap(Width, Height, Bitmap.Config.ARGB_8888);
+            mDstBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
             Canvas c = new Canvas(mDstBitmap);
             c.drawColor(Color.TRANSPARENT);
 
-            float Width2 = c.getWidth()/2; //obtengo medidas del bitmap
-            float Height2 = c.getHeight()/2;
+            //float Width2 = c.getWidth()/2; //obtengo medidas del bitmap
+            //float Height2 = c.getHeight()/2;
             Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
             p.setColor(Color.RED);
-            c.drawOval(new RectF(Width2-radio,Height2-radio,Width2+radio,Height2+radio), p);
+            c.drawOval(new RectF(0, 0, mWidth, mHeight), p);
 
         }
 
@@ -155,11 +155,10 @@ public class CustomView extends View {
 
     public Bitmap Lines(float radio, int Width, int Height) {
 
-        if (linesBitmap == null){
-            linesBitmap = Bitmap.createBitmap(Width, Height, Bitmap.Config.ARGB_8888);
+        if (linesBitmap == null) {
+            linesBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
             linesCanvas = new Canvas(linesBitmap);
         }
-
 
         Canvas canvas = linesCanvas;
 
@@ -167,21 +166,26 @@ public class CustomView extends View {
         ////canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR); //It's like repaint
         canvas.drawColor(SKY_COLOR);
 
-        float centerX = Width / 2;
-        float centerY = Height / 2;
+        float centerX = mWidth / 2;
+        float centerY = mHeight / 2;
+        float radius = 0.0f;
+        if (centerX > centerY)
+            radius = centerY - centerY; // +69, -28 , -10
+        else
+            radius = centerX - centerX;
 
         canvas.save();
 
         canvas.rotate(mRoll, centerX, centerY);
-        canvas.translate(0, (mPitch / TOTAL_VISIBLE_PITCH_DEGREES) * Height);
+        canvas.translate(0, (mPitch / TOTAL_VISIBLE_PITCH_DEGREES) * mHeight);
 
         //The earth paint
         canvas.drawRect(-mWidth, centerY, mWidth * 2, mHeight * 2, mEarthPaint);
 
 
         //Triangle
-        float bottomLadderStepX = radio/3;
-        float bottomLadderStepY = radio/3;
+        float bottomLadderStepX = mWidth / 6;
+        float bottomLadderStepY = mWidth / 6;
         canvas.drawLine(centerX, centerY, centerX - bottomLadderStepX * 2f, centerY
                 + bottomLadderStepY * 2f, linePaint);
         canvas.drawLine(centerX, centerY, centerX + bottomLadderStepX * 2f, centerY
@@ -189,19 +193,19 @@ public class CustomView extends View {
 
         //draw bottom lines
         for (int i = 1; i < 8; i++) {
-            float y = centerY + bottomLadderStepY * i/3;
-            if (i%2==0)
-                canvas.drawLine(centerX - radio * i/9f, y, centerX + radio * i/9f , y,
+            float y = centerY + bottomLadderStepY * i / 3;
+            if (i % 2 == 0)
+                canvas.drawLine(centerX - radio * i / 9f, y, centerX + radio * i / 9f, y,
                         linePaint); //en vez de radio estaba bottomLadderStepX
 
         }
 
         //Draw up lines
-        float ladderStepY = radio/3;
+        float ladderStepY = mHeight / 6;
         for (int i = 1; i <= 8; i++) {
-            float width = Width / 8;
-            float y = centerY - ladderStepY * i/3;
-            if(i % 2 == 0)
+            float width = mWidth / 8;
+            float y = centerY - ladderStepY * i / 3;
+            if (i % 2 == 0)
                 canvas.drawLine(centerX - width / 2, y, centerX + width / 2, y, lineUpPaint);
         }
 
@@ -209,23 +213,59 @@ public class CustomView extends View {
         //canvas.save();
         canvas.restore();
 
-
         //LO que no se mueve
 
         //canvas.drawPoint(centerX, centerY, linePaint);
 
-        canvas.drawCircle(centerX, centerY, radio/20, arrowPaint);
-        canvas.drawLine(centerX-(radio/20), centerY, centerX - (radio/4), centerY, arrowPaint);
-        canvas.drawLine(centerX + (radio/20), centerY, centerX + (radio/4), centerY, arrowPaint);
-        canvas.drawLine(centerX, centerY-radio/15, centerX-10, centerY+radio/20, arrowPaint);
-        canvas.drawLine(centerX, centerY-radio/15, centerX+10, centerY+radio/20, arrowPaint);
+        canvas.drawCircle(centerX, centerY, radio / 20, arrowPaint);
+        canvas.drawLine(centerX - (radio / 20), centerY, centerX - (radio / 4), centerY, arrowPaint);
+        canvas.drawLine(centerX + (radio / 20), centerY, centerX + (radio / 4), centerY, arrowPaint);
+        canvas.drawLine(centerX, centerY - radio / 15, centerX - 10, centerY + radio / 20, arrowPaint);
+        canvas.drawLine(centerX, centerY - radio / 15, centerX + 10, centerY + radio / 20, arrowPaint);
 
         Path triangle = new Path();
-        triangle.moveTo(centerX, centerY-radio/15);
-        triangle.lineTo(centerX-10, centerY-radio);
+        triangle.moveTo(centerX, centerY - radio / 15);
+        triangle.lineTo(centerX - 10, centerY - radio);
+        canvas.drawPath(triangle, arrowPaint);
+
+        canvas.save();
+
+        canvas.rotate(-80, centerX, centerY);
+        for (int i = -80; i < 90; i += 10) {
+            // Show a numeric value every 30 degrees
+            if (i % 30 == 0) {
+                String rollString = String.valueOf(i * -1);
+                float rollStringWidth = textPaint.measureText(rollString);
+                PointF rollStringCenter = new PointF(centerX - rollStringWidth / 2,
+                        radius + 20);
+                canvas.drawText(rollString, rollStringCenter.x, rollStringCenter.y, textPaint);
+            }
+            // Otherwise draw a marker line
+            else {
+                canvas.drawLine(centerX, (int) radius,
+                        centerX, radius + 7,
+                        linePaint);
+            }
+            canvas.rotate(10, centerX, centerY);
+        }
+
+        canvas.restore();
+
+        canvas.save();
+
+        canvas.rotate(-mRoll, centerX, centerY ); //Arrow movement
+
+        //arrow
+        Path rollArrow = new Path();
+        rollArrow.moveTo(centerX, radius+textSize);
+        rollArrow.lineTo(centerX-7, radius*radius/7);
+        rollArrow.lineTo(centerX+7, radius*radius/7);
+        rollArrow.lineTo(centerX, radius+textSize);
+        canvas.drawPath(rollArrow, arrowPaint);
+
+        canvas.restore();
 
 
-//        canvas.drawPath(triangle, arrowPaint);
 
         return linesBitmap;
     }
@@ -266,18 +306,18 @@ public class CustomView extends View {
                 | Canvas.CLIP_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG
                 | Canvas.FULL_COLOR_LAYER_SAVE_FLAG | Canvas.CLIP_TO_LAYER_SAVE_FLAG);
 
-        canvas.drawBitmap(circle, viewWidthHalf-radius,viewHeightHalf-radius, mBitmapPaint);
+        canvas.drawBitmap(circle, 0, 0, mBitmapPaint);
         mBitmapPaint.setXfermode(mXfermode);
-        canvas.drawBitmap(line, viewWidthHalf-radius, viewHeightHalf-radius, mBitmapPaint);
+        canvas.drawBitmap(line, 0, 0, mBitmapPaint);
         mBitmapPaint.setXfermode(null);
 
         canvas.restoreToCount(sc);
 
-        canvas.save();
+        //canvas.save();
 
 
 
-        canvas.rotate(-mRoll, centerX, centerY ); //Arrow movement
+        /*canvas.rotate(-mRoll, centerX, centerY ); //Arrow movement
 
         //arrow
         Path rollArrow = new Path();
@@ -285,11 +325,11 @@ public class CustomView extends View {
         rollArrow.lineTo(centerX-12, viewHeightHalf-radius+50);
         rollArrow.lineTo(centerX+12, viewHeightHalf-radius+50);
         rollArrow.lineTo(centerX, viewHeightHalf-radius+textSize);
-        canvas.drawPath(rollArrow, arrowPaint);
+        canvas.drawPath(rollArrow, arrowPaint);*/
 
-        canvas.restore();
+        //canvas.restore();
 
-        canvas.rotate(-80, centerX, centerY);
+        /*canvas.rotate(-80, centerX, centerY);
         for (int i = -80; i < 90; i += 10)
         {
             // Show a numeric value every 30 degrees
@@ -309,8 +349,8 @@ public class CustomView extends View {
 
             canvas.rotate(10, centerX, centerY);
         }
-
-        canvas.restore();
+        */
+        //canvas.restore();
     }
 
     public void setAttitude(float pitch, float roll) {
